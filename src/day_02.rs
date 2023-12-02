@@ -1,11 +1,11 @@
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 struct GameReveal {
     red: u8,
     green: u8,
     blue: u8,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 struct Game {
     id: i64,
     reveals: Vec<GameReveal>,
