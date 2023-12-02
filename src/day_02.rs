@@ -110,7 +110,7 @@ pub fn day_2_part_2(data: &str) -> i64 {
             }
             return maximums.red as i64 * maximums.green as i64 * maximums.blue as i64;
         })
-        .sum::<i64>()
+        .sum()
 }
 
 #[cfg(test)]
