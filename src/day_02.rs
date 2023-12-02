@@ -92,23 +92,21 @@ pub fn day_2_part_2(data: &str) -> i64 {
     games
         .iter()
         .map(|game| {
-            let mut maximums = GameReveal {
-                red: 0,
-                green: 0,
-                blue: 0,
-            };
+            let mut max_red: u8 = 0;
+            let mut max_green: u8 = 0;
+            let mut max_blue: u8 = 0;
             for reveal in &game.reveals {
-                if reveal.red > maximums.red {
-                    maximums.red = reveal.red;
+                if reveal.red > max_red {
+                    max_red = reveal.red;
                 }
-                if reveal.green > maximums.green {
-                    maximums.green = reveal.green;
+                if reveal.green > max_green {
+                    max_green = reveal.green;
                 }
-                if reveal.blue > maximums.blue {
-                    maximums.blue = reveal.blue;
+                if reveal.blue > max_blue {
+                    max_blue = reveal.blue;
                 }
             }
-            return maximums.red as i64 * maximums.green as i64 * maximums.blue as i64;
+            return max_red as i64 * max_green as i64 * max_blue as i64;
         })
         .sum()
 }
