@@ -101,8 +101,6 @@ fn identify_part_numbers(data: &Array2<char>) -> (Vec<i64>, Array2<i64>) {
                 if start_text_j != -1 && has_seen_symbol {
                     let end_text_j = j as isize - 1;
                     let text_len = end_text_j - start_text_j + 1;
-                    // let number = &data
-                    //     .slice(ndarray::s![i, start_text_j as usize..=end_text_j as usize]);
                     let number = compute_number_from_matrix(
                         &data,
                         i,
