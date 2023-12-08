@@ -162,7 +162,7 @@ pub fn day_8_part_1(data: &str) -> i64 {
  *
  * After implementing half of the solution, I thought that it wasn't going to work
  * but the problem was designed to work with this solution after all.
- * I found out on the subreddit that it was the way to go.
+ * I found out on the subreddit that it was indeed the way to go.
  */
 #[inline]
 fn node_ends_with_a(node: NodeName) -> bool {
