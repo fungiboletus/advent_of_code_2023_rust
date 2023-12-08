@@ -156,13 +156,16 @@ pub fn day_8_part_1(data: &str) -> i64 {
  *
  * After all, part 2 is not a Djikstra's algorithm.
  *
- * Naive solution is too slow, so we need to find a way to optimize it.
+ * I implemented a naive solution that was too slow. So I thought about computing
+ * the number of iterations independently for each starting point and then compute
+ * the least common multiple.
  *
- * I didn't remember the gcd algorithm so I had to look it up, but otherwise so far so good.
+ * I didn't remember the lcm algorithm so I had to look it up.
  *
- * After implementing half of the solution, I thought that it wasn't going to work
- * but the problem was designed to work with this solution after all.
- * I found out on the subreddit that it was indeed the way to go.
+ * After implementing half of the faster solution, I thought that it wasn't going to work
+ * and gave up.
+ * I found out on the subreddit that it was indeed the way to go, as the problem data
+ * was crafted to work with the lcm algorithm. I find the part 2 a bit sneaky.
  */
 #[inline]
 fn node_ends_with_a(node: NodeName) -> bool {
