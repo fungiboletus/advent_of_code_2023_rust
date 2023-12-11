@@ -7,6 +7,7 @@ mod day_06;
 mod day_07;
 mod day_08;
 mod day_09;
+mod day_10;
 
 mod year_2015;
 
@@ -66,4 +67,8 @@ fn main() {
     let day_9_data = include_str!("../inputs/day_09.txt");
     println!("Day 9, part 1: {}", day_09::day_9_part_1(day_9_data));
     println!("Day 9, part 2: {}", day_09::day_9_part_2(day_9_data));
+
+    let day_10_data = include_str!("../inputs/day_10.txt");
+    println!("Day 10, part 1: {}", day_10::day_10_part_1(day_10_data));
+    println!("Day 10, part 2: {}", day_10::day_10_part_2(day_10_data));
 }
