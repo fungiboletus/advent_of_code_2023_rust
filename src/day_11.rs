@@ -27,12 +27,12 @@ impl Tile {
     }
 }
 
-fn empty_lists_indexes(bools: &[bool]) -> Vec<usize> {
+fn empty_lists_indexes(bools: &[bool], expansion: usize) -> Vec<usize> {
     bools
         .iter()
         .scan((0, false), |state, &val| {
             let (sum, prev) = *state;
-            *state = (sum + if prev { 2 } else { 1 }, val);
+            *state = (sum + if prev { expansion } else { 1 }, val);
             Some(state.0)
         })
         .collect()
@@ -56,10 +56,8 @@ fn parse_input_data(data: &str) -> IResult<&str, Array2<Tile>> {
     ))
 }
 
-pub fn day_11_part_1(data: &str) -> i64 {
-    let (_, grid) = parse_input_data(data).expect("Failed to parse input data");
-
-    println!("{:?}", grid);
+fn compute_sum_of_manhattan_distances(grid: &Array2<Tile>, expansion: usize) -> i64 {
+    //println!("{:?}", grid);
 
     // Iterate row by row on the grid Array2
     let empty_rows: Vec<bool> = grid
@@ -74,14 +72,14 @@ pub fn day_11_part_1(data: &str) -> i64 {
         .map(|column| column.iter().all(|tile| *tile == Tile::Empty))
         .collect();
 
-    println!("{:?}", empty_rows);
-    println!("{:?}", empty_columns);
+    //println!("{:?}", empty_rows);
+    //println!("{:?}", empty_columns);
 
-    let index_rows: Vec<usize> = empty_lists_indexes(&empty_rows);
-    let index_columns: Vec<usize> = empty_lists_indexes(&empty_columns);
+    let index_rows: Vec<usize> = empty_lists_indexes(&empty_rows, expansion);
+    let index_columns: Vec<usize> = empty_lists_indexes(&empty_columns, expansion);
 
-    println!("{:?}", index_rows);
-    println!("{:?}", index_columns);
+    //println!("{:?}", index_rows);
+    //println!("{:?}", index_columns);
 
     // find all the galaxies and but them into a list
     let list_of_galaxies: Vec<(usize, usize)> = grid
@@ -90,12 +88,12 @@ pub fn day_11_part_1(data: &str) -> i64 {
         .map(|((row, col), _)| (row, col))
         .collect();
 
-    println!("{:?}", list_of_galaxies);
+    //println!("{:?}", list_of_galaxies);
     let nb_galaxies = list_of_galaxies.len();
 
     couples(nb_galaxies)
         .map(|(galaxy_a, galaxy_b)| {
-            println!("{:?} {:?}", galaxy_a, galaxy_b);
+            //println!("{:?} {:?}", galaxy_a, galaxy_b);
 
             let (row_a, col_a) = list_of_galaxies[galaxy_a];
             let (row_b, col_b) = list_of_galaxies[galaxy_b];
@@ -112,8 +110,14 @@ pub fn day_11_part_1(data: &str) -> i64 {
         .sum()
 }
 
+pub fn day_11_part_1(data: &str) -> i64 {
+    let (_, grid) = parse_input_data(data).expect("Failed to parse input data");
+    compute_sum_of_manhattan_distances(&grid, 2)
+}
+
 pub fn day_11_part_2(data: &str) -> i64 {
-    42
+    let (_, grid) = parse_input_data(data).expect("Failed to parse input data");
+    compute_sum_of_manhattan_distances(&grid, 1000000)
 }
 
 #[cfg(test)]
@@ -138,6 +142,8 @@ mod tests {
 
     #[test]
     fn test_day_11_part_2() {
-        assert_eq!(day_11_part_2(EXAMPLE), 42);
+        let (_, grid) = parse_input_data(EXAMPLE).expect("Failed to parse input data");
+        assert_eq!(compute_sum_of_manhattan_distances(&grid, 10), 1030);
+        assert_eq!(compute_sum_of_manhattan_distances(&grid, 100), 8410);
     }
 }
