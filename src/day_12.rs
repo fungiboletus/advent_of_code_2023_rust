@@ -25,6 +25,9 @@
     lifetimes is a bit weird for example.
 */
 
+// Let's make it faster by using rayon and computing each spring in parallel.
+use rayon::prelude::*;
+
 use core::hash::Hash;
 use std::{collections::HashMap, hash::Hasher, marker::PhantomData};
 
@@ -149,7 +152,7 @@ pub fn day_12_part_1(data: &str) -> i64 {
     let (_, springs) = parse_input_data(data).expect("Failed to parse input data");
 
     springs
-        .iter()
+        .par_iter()
         .map(|(spring, sizes)| {
             let mut extended_spring = Vec::with_capacity(spring.len() + 1);
             extended_spring.extend(spring.iter());
@@ -164,7 +167,7 @@ pub fn day_12_part_2(data: &str) -> i64 {
     let (_, springs) = parse_input_data(data).expect("Failed to parse input data");
 
     springs
-        .iter()
+        .par_iter()
         .map(|(spring, sizes)| {
             let mut extended_spring: Vec<SpringCondition> =
                 Vec::with_capacity(spring.len() * 5 + 5);
