@@ -37,9 +37,7 @@ use nom::{
     IResult,
 };
 
-// Notice the Hash chatgpt,
-// it's needed to be used as a key in a HashMap.
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 enum SpringCondition {
     Operational,
     Damaged,
@@ -77,7 +75,6 @@ fn parse_input_data(data: &str) -> IResult<&str, Vec<(Vec<SpringCondition>, Vec<
 
 // This MemoKey uses pointers
 // to avoid copying the slices when doing the memoisation.
-#[derive(Clone, Copy)]
 struct MemoKey<'a> {
     spring: *const SpringCondition, // Pointer to spring slice
     sizes: *const u64,              // Pointer to sizes slice
