@@ -122,25 +122,23 @@ fn num_solutions<'a>(
     }
 
     let mut num_sols = 0;
-    let possible = if spring[0] == SpringCondition::Unknown {
-        vec![SpringCondition::Operational, SpringCondition::Damaged]
-    } else {
-        vec![spring[0]]
-    };
+    let first_condition = spring[0];
 
-    for &c in &possible {
-        if c == SpringCondition::Damaged {
-            num_sols += num_solutions(&spring[1..], sizes, num_done_in_group + 1, memo);
-        } else {
-            if num_done_in_group > 0 {
-                if let Some((&first_size, rest_sizes)) = sizes.split_first() {
-                    if first_size == num_done_in_group {
-                        num_sols += num_solutions(&spring[1..], rest_sizes, 0, memo);
-                    }
+    if first_condition == SpringCondition::Damaged || first_condition == SpringCondition::Unknown {
+        num_sols += num_solutions(&spring[1..], sizes, num_done_in_group + 1, memo);
+    }
+
+    if first_condition == SpringCondition::Operational
+        || first_condition == SpringCondition::Unknown
+    {
+        if num_done_in_group > 0 {
+            if let Some((&first_size, rest_sizes)) = sizes.split_first() {
+                if first_size == num_done_in_group {
+                    num_sols += num_solutions(&spring[1..], rest_sizes, 0, memo);
                 }
-            } else {
-                num_sols += num_solutions(&spring[1..], sizes, 0, memo);
             }
+        } else {
+            num_sols += num_solutions(&spring[1..], sizes, 0, memo);
         }
     }
 
