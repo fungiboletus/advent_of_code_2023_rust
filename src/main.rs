@@ -1,3 +1,5 @@
+use std::time::Instant;
+
 mod day_01;
 mod day_02;
 mod day_03;
@@ -10,10 +12,12 @@ mod day_09;
 mod day_10;
 mod day_11;
 mod day_12;
+mod day_13;
 
 mod year_2015;
 
 fn main() {
+    let now = Instant::now();
     let day_2015_12_01_data = include_str!("../inputs/year_2015/day_2015_12_01.txt");
     println!(
         "Day 2015, 12, part 1: {}",
@@ -23,7 +27,9 @@ fn main() {
         "Day 2015, 12, part 2: {}",
         year_2015::day_2015_12_01::day_2015_12_01_part_2(day_2015_12_01_data)
     );
+    println!("Time: {:?}", now.elapsed());
 
+    let now = Instant::now();
     let day_2015_12_02_data = include_str!("../inputs/year_2015/day_2015_12_02.txt");
     println!(
         "Day 2015, 12, part 1: {}",
@@ -33,52 +39,83 @@ fn main() {
         "Day 2015, 12, part 2: {}",
         year_2015::day_2015_12_02::day_2015_12_02_part_2(day_2015_12_02_data)
     );
+    println!("Time: {:?}", now.elapsed());
 
+    let now = Instant::now();
     let day_1_data = include_str!("../inputs/day_01.txt");
     println!("Day 1, part 1: {}", day_01::day_1_part_1(day_1_data));
     println!("Day 1, part 2: {}", day_01::day_1_part_2(day_1_data));
+    println!("Time: {:?}", now.elapsed());
 
+    let now = Instant::now();
     let day_2_data = include_str!("../inputs/day_02.txt");
     println!("Day 2, part 1: {}", day_02::day_2_part_1(day_2_data));
     println!("Day 2, part 2: {}", day_02::day_2_part_2(day_2_data));
+    println!("Time: {:?}", now.elapsed());
 
+    let now = Instant::now();
     let day_3_data = include_str!("../inputs/day_03.txt");
     println!("Day 3, part 1: {}", day_03::day_3_part_1(day_3_data));
     println!("Day 3, part 2: {}", day_03::day_3_part_2(day_3_data));
+    println!("Time: {:?}", now.elapsed());
 
+    let now = Instant::now();
     let day_4_data = include_str!("../inputs/day_04.txt");
     println!("Day 4, part 1: {}", day_04::day_4_part_1(day_4_data));
     println!("Day 4, part 2: {}", day_04::day_4_part_2(day_4_data));
+    println!("Time: {:?}", now.elapsed());
 
+    let now = Instant::now();
     let day_5_data = include_str!("../inputs/day_05.txt");
     println!("Day 5, part 1: {}", day_05::day_5_part_1(day_5_data));
     println!("Day 5, part 2: {}", day_05::day_5_part_2(day_5_data));
+    println!("Time: {:?}", now.elapsed());
 
+    let now = Instant::now();
     let day_6_data = include_str!("../inputs/day_06.txt");
     println!("Day 6, part 1: {}", day_06::day_6_part_1(day_6_data));
     println!("Day 6, part 2: {}", day_06::day_6_part_2(day_6_data));
+    println!("Time: {:?}", now.elapsed());
 
+    let now = Instant::now();
     let day_7_data = include_str!("../inputs/day_07.txt");
     println!("Day 7, part 1: {}", day_07::day_7_part_1(day_7_data));
     println!("Day 7, part 2: {}", day_07::day_7_part_2(day_7_data));
+    println!("Time: {:?}", now.elapsed());
 
+    let now = Instant::now();
     let day_8_data = include_str!("../inputs/day_08.txt");
     println!("Day 8, part 1: {}", day_08::day_8_part_1(day_8_data));
     println!("Day 8, part 2: {}", day_08::day_8_part_2(day_8_data));
+    println!("Time: {:?}", now.elapsed());
 
+    let now = Instant::now();
     let day_9_data = include_str!("../inputs/day_09.txt");
     println!("Day 9, part 1: {}", day_09::day_9_part_1(day_9_data));
     println!("Day 9, part 2: {}", day_09::day_9_part_2(day_9_data));
+    println!("Time: {:?}", now.elapsed());
 
+    let now = Instant::now();
     let day_10_data = include_str!("../inputs/day_10.txt");
     println!("Day 10, part 1: {}", day_10::day_10_part_1(day_10_data));
     println!("Day 10, part 2: {}", day_10::day_10_part_2(day_10_data));
+    println!("Time: {:?}", now.elapsed());
 
+    let now = Instant::now();
     let day_11_data = include_str!("../inputs/day_11.txt");
     println!("Day 11, part 1: {}", day_11::day_11_part_1(day_11_data));
     println!("Day 11, part 2: {}", day_11::day_11_part_2(day_11_data));
+    println!("Time: {:?}", now.elapsed());
 
+    let now = Instant::now();
     let day_12_data = include_str!("../inputs/day_12.txt");
     println!("Day 12, part 1: {}", day_12::day_12_part_1(day_12_data));
     println!("Day 12, part 2: {}", day_12::day_12_part_2(day_12_data));
+    println!("Time: {:?}", now.elapsed());
+
+    let now = Instant::now();
+    let day_13_data = include_str!("../inputs/day_13.txt");
+    println!("Day 13, part 1: {}", day_13::day_13_part_1(day_13_data));
+    println!("Day 13, part 2: {}", day_13::day_13_part_2(day_13_data));
+    println!("Time: {:?}", now.elapsed());
 }
