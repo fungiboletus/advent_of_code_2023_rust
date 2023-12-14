@@ -1,7 +1,7 @@
 /*
     Part 1: it sounds like we need to work column by column
     and create slices on the areas between the unmovable cube shaped rows.
-    then we can sort those areas, with rounded rocks first and empty then.
+    then we can count the rounded rocks and put them first.
     then, we need to count based on the row number.
 */
 
@@ -94,6 +94,7 @@ fn extract_subsections(column: &ArrayView1<Tile>) -> Vec<(usize, usize)> {
     subsections
 }
 
+#[derive(Debug, PartialEq, Eq)]
 enum TiltDirection {
     North,
     West,
@@ -102,21 +103,6 @@ enum TiltDirection {
 }
 
 fn tilt_vertically(mut grid: Array2<Tile>, direction: TiltDirection) -> Array2<Tile> {
-    let rounded_rock_first: std::cmp::Ordering;
-    let rounded_rock_second: std::cmp::Ordering;
-    match direction {
-        TiltDirection::North => {
-            rounded_rock_first = std::cmp::Ordering::Less;
-            rounded_rock_second = std::cmp::Ordering::Greater;
-        }
-        TiltDirection::South => {
-            rounded_rock_first = std::cmp::Ordering::Greater;
-            rounded_rock_second = std::cmp::Ordering::Less;
-        }
-        _ => {
-            panic!("Don't use this function for horizontal tilting");
-        }
-    }
     // work column by column
     for mut column in grid.columns_mut().into_iter() {
         // We identify the subsections that we need to work on.
@@ -124,23 +110,32 @@ fn tilt_vertically(mut grid: Array2<Tile>, direction: TiltDirection) -> Array2<T
         let subsections = extract_subsections(&column.view());
 
         for (start, end) in subsections {
-            // We extract the subsection as a vector because we need to sort it
-            // and ndarray::ArrayViewMut doesn't implement sort.
-            let mut slice = column.slice(s![start..end]).to_vec();
+            let mut slice = column.slice_mut(s![start..end]);
 
-            // We sort the subsection by putting the rounded rocks first.
-            slice.sort_unstable_by(|a, b| match (a, b) {
-                (Tile::CubeShapedRock, _) | (_, Tile::CubeShapedRock) => {
-                    unreachable!("Cube shaped rock in the middle of a slice")
+            // We count the number of rocks in the subsection
+            let nb_rocks = slice
+                .iter()
+                .filter(|&&tile| tile == Tile::RoundedRock)
+                .count();
+
+            // We fill accordingly
+            if direction == TiltDirection::North {
+                for (i, tile) in slice.iter_mut().enumerate() {
+                    *tile = if i < nb_rocks {
+                        Tile::RoundedRock
+                    } else {
+                        Tile::Empty
+                    };
                 }
-                (Tile::RoundedRock, _) => rounded_rock_first,
-                (_, Tile::RoundedRock) => rounded_rock_second,
-                _ => std::cmp::Ordering::Equal,
-            });
-
-            // We update the column with the sorted subsection.
-            for (row, tile) in slice.into_iter().enumerate() {
-                column[start + row] = tile;
+            } else {
+                let nb_rows = slice.len();
+                for (i, tile) in slice.iter_mut().enumerate() {
+                    *tile = if i >= nb_rows - nb_rocks {
+                        Tile::RoundedRock
+                    } else {
+                        Tile::Empty
+                    };
+                }
             }
         }
     }
@@ -149,21 +144,6 @@ fn tilt_vertically(mut grid: Array2<Tile>, direction: TiltDirection) -> Array2<T
 }
 
 fn tilt_horizontally(mut grid: Array2<Tile>, direction: TiltDirection) -> Array2<Tile> {
-    let rounded_rock_first: std::cmp::Ordering;
-    let rounded_rock_second: std::cmp::Ordering;
-    match direction {
-        TiltDirection::West => {
-            rounded_rock_first = std::cmp::Ordering::Less;
-            rounded_rock_second = std::cmp::Ordering::Greater;
-        }
-        TiltDirection::East => {
-            rounded_rock_first = std::cmp::Ordering::Greater;
-            rounded_rock_second = std::cmp::Ordering::Less;
-        }
-        _ => {
-            panic!("Don't use this function for vertical tilting");
-        }
-    }
     // work row by row
     for mut row in grid.rows_mut().into_iter() {
         // We identify the subsections that we need to work on.
@@ -171,23 +151,32 @@ fn tilt_horizontally(mut grid: Array2<Tile>, direction: TiltDirection) -> Array2
         let subsections = extract_subsections(&row.view());
 
         for (start, end) in subsections {
-            // We extract the subsection as a vector because we need to sort it
-            // and ndarray::ArrayViewMut doesn't implement sort.
-            let mut slice = row.slice(s![start..end]).to_vec();
+            let mut slice = row.slice_mut(s![start..end]);
 
-            // We sort the subsection by putting the rounded rocks first.
-            slice.sort_unstable_by(|a, b| match (a, b) {
-                (Tile::CubeShapedRock, _) | (_, Tile::CubeShapedRock) => {
-                    unreachable!("Cube shaped rock in the middle of a slice")
+            // We count the number of rocks in the subsection
+            let nb_rocks = slice
+                .iter()
+                .filter(|&&tile| tile == Tile::RoundedRock)
+                .count();
+
+            // We fill accordingly
+            if direction == TiltDirection::West {
+                for (i, tile) in slice.iter_mut().enumerate() {
+                    *tile = if i < nb_rocks {
+                        Tile::RoundedRock
+                    } else {
+                        Tile::Empty
+                    };
                 }
-                (Tile::RoundedRock, _) => rounded_rock_first,
-                (_, Tile::RoundedRock) => rounded_rock_second,
-                _ => std::cmp::Ordering::Equal,
-            });
-
-            // We update the column with the sorted subsection.
-            for (column, tile) in slice.into_iter().enumerate() {
-                row[start + column] = tile;
+            } else {
+                let nb_cols = slice.len();
+                for (i, tile) in slice.iter_mut().enumerate() {
+                    *tile = if i >= nb_cols - nb_rocks {
+                        Tile::RoundedRock
+                    } else {
+                        Tile::Empty
+                    };
+                }
             }
         }
     }
@@ -228,6 +217,10 @@ pub fn day_14_part_2(data: &str) -> i64 {
     let (_, grid) = parse_input_data(data).expect("Failed to parse input data");
     let nb_rows = grid.nrows();
     let mut work_grid = grid.to_owned();
+
+    /*print_grid(&work_grid.view());
+    let lol = cycle(work_grid.clone());
+    print_grid(&lol.view());*/
 
     // We will cache the grids we have already seen
     // Key is the grid, value is the index of the cycle
