@@ -45,6 +45,18 @@ fn find_last_substring(data: &Vec<char>, search: &Vec<char>) -> Option<usize> {
 pub fn day_1_part_2(data: &str) -> i64 {
     let lines = parse_input_data(data);
 
+    let full_text_data: Vec<(Vec<char>, char)> = vec![
+        (vec!['o', 'n', 'e'], '1'),
+        (vec!['t', 'w', 'o'], '2'),
+        (vec!['t', 'h', 'r', 'e', 'e'], '3'),
+        (vec!['f', 'o', 'u', 'r'], '4'),
+        (vec!['f', 'i', 'v', 'e'], '5'),
+        (vec!['s', 'i', 'x'], '6'),
+        (vec!['s', 'e', 'v', 'e', 'n'], '7'),
+        (vec!['e', 'i', 'g', 'h', 't'], '8'),
+        (vec!['n', 'i', 'n', 'e'], '9'),
+    ];
+
     let numbers = lines.iter().map(|line| {
         let (mut index_first_digit, first_digit) = line
             .iter()
@@ -61,25 +73,13 @@ pub fn day_1_part_2(data: &str) -> i64 {
         let mut first_digit = *first_digit;
         let mut last_digit = *last_digit;
 
-        let full_text_data: Vec<(Vec<char>, char)> = vec![
-            (vec!['o', 'n', 'e'], '1'),
-            (vec!['t', 'w', 'o'], '2'),
-            (vec!['t', 'h', 'r', 'e', 'e'], '3'),
-            (vec!['f', 'o', 'u', 'r'], '4'),
-            (vec!['f', 'i', 'v', 'e'], '5'),
-            (vec!['s', 'i', 'x'], '6'),
-            (vec!['s', 'e', 'v', 'e', 'n'], '7'),
-            (vec!['e', 'i', 'g', 'h', 't'], '8'),
-            (vec!['n', 'i', 'n', 'e'], '9'),
-        ];
-
-        for (search, replacement) in full_text_data {
+        for (search, replacement) in &full_text_data {
             let search_first = find_first_substring(line, &search);
             match search_first {
                 Some(index) => {
                     if index < index_first_digit {
                         index_first_digit = index;
-                        first_digit = replacement;
+                        first_digit = *replacement;
                     }
                 }
                 None => {}
@@ -90,7 +90,7 @@ pub fn day_1_part_2(data: &str) -> i64 {
                 Some(index) => {
                     if index > index_last_digit {
                         index_last_digit = index;
-                        last_digit = replacement;
+                        last_digit = *replacement;
                     }
                 }
                 None => {}
