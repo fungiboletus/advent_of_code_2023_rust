@@ -91,19 +91,13 @@ fn pretty_print_visits(grid: &Array2<Tile>, visits: &Array2<Visit>) {
     println!();
 }
 
-pub fn day_16_part_1(data: &str) -> i64 {
-    let (_, grid) = parse_input_data(data).expect("Failed to parse input data");
-
+fn compute_beams(start: VisitSchedule, grid: &Array2<Tile>) -> Array2<Visit> {
     let (nb_rows, nb_cols) = grid.dim();
 
     let mut visits = Array2::from_elem((nb_rows, nb_cols), Visit::default());
 
     let mut stack: Vec<VisitSchedule> = Vec::new();
-    stack.push(VisitSchedule {
-        row: 0,
-        col: 0,
-        direction: VisitHeading::Right,
-    });
+    stack.push(start);
 
     while let Some(visit) = stack.pop() {
         //pretty_print_visits(&grid, &visits);
@@ -349,13 +343,96 @@ pub fn day_16_part_1(data: &str) -> i64 {
     }
 
     visits
-        .iter()
-        .filter(|visit| visit.up || visit.down || visit.left || visit.right)
-        .count() as i64
+}
+
+trait VisitScheduleExt {
+    fn compute_nb_visits(&self) -> usize;
+}
+impl VisitScheduleExt for Array2<Visit> {
+    #[inline]
+    fn compute_nb_visits(&self) -> usize {
+        self.iter()
+            .filter(|visit| visit.up || visit.down || visit.left || visit.right)
+            .count()
+    }
+}
+
+pub fn day_16_part_1(data: &str) -> i64 {
+    let (_, grid) = parse_input_data(data).expect("Failed to parse input data");
+
+    compute_beams(
+        VisitSchedule {
+            row: 0,
+            col: 0,
+            direction: VisitHeading::Right,
+        },
+        &grid,
+    )
+    .compute_nb_visits() as i64
 }
 
 pub fn day_16_part_2(data: &str) -> i64 {
-    42
+    let (_, grid) = parse_input_data(data).expect("Failed to parse input data");
+    let (nb_rows, nb_cols) = grid.dim();
+
+    let mut max = 0_usize;
+
+    // Every column
+    for col in 0..nb_cols {
+        // From top
+        max = max.max(
+            compute_beams(
+                VisitSchedule {
+                    row: 0,
+                    col,
+                    direction: VisitHeading::Down,
+                },
+                &grid,
+            )
+            .compute_nb_visits(),
+        );
+        // From bottom
+        max = max.max(
+            compute_beams(
+                VisitSchedule {
+                    row: nb_rows - 1,
+                    col,
+                    direction: VisitHeading::Up,
+                },
+                &grid,
+            )
+            .compute_nb_visits(),
+        );
+    }
+    // Every row
+    for row in 0..nb_rows {
+        // From left
+        max = max.max(
+            compute_beams(
+                VisitSchedule {
+                    row,
+                    col: 0,
+                    direction: VisitHeading::Right,
+                },
+                &grid,
+            )
+            .compute_nb_visits(),
+        );
+        // From right
+        max = max.max(
+            compute_beams(
+                VisitSchedule {
+                    row,
+                    col: nb_cols - 1,
+                    direction: VisitHeading::Left,
+                },
+                &grid,
+            )
+            .compute_nb_visits(),
+        );
+    }
+
+    max as i64
 }
 
 #[cfg(test)]
@@ -380,6 +457,6 @@ mod tests {
 
     #[test]
     fn test_day_16_part_2() {
-        assert_eq!(day_16_part_2(EXAMPLE), 42);
+        assert_eq!(day_16_part_2(EXAMPLE), 51);
     }
 }
