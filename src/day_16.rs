@@ -1,13 +1,17 @@
-use ndarray::Array2;
 /*
-    Comments.
+    Relatively simple problem that can be solved without any fancy algorithm.
+
+    I tried to add some memoisation but the stack and the grid had to be memoised
+    and it was simply not working.
 */
+use ndarray::Array2;
 use nom::{
     character::complete::{line_ending, one_of},
     combinator::map,
     multi::{many1, separated_list1},
     IResult,
 };
+use rayon::prelude::*;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 enum Tile {
@@ -375,64 +379,31 @@ pub fn day_16_part_2(data: &str) -> i64 {
     let (_, grid) = parse_input_data(data).expect("Failed to parse input data");
     let (nb_rows, nb_cols) = grid.dim();
 
-    let mut max = 0_usize;
-
-    // Every column
-    for col in 0..nb_cols {
-        // From top
-        max = max.max(
-            compute_beams(
-                VisitSchedule {
-                    row: 0,
-                    col,
-                    direction: VisitHeading::Down,
-                },
-                &grid,
-            )
-            .compute_nb_visits(),
-        );
-        // From bottom
-        max = max.max(
-            compute_beams(
-                VisitSchedule {
-                    row: nb_rows - 1,
-                    col,
-                    direction: VisitHeading::Up,
-                },
-                &grid,
-            )
-            .compute_nb_visits(),
-        );
-    }
-    // Every row
-    for row in 0..nb_rows {
-        // From left
-        max = max.max(
-            compute_beams(
-                VisitSchedule {
-                    row,
-                    col: 0,
-                    direction: VisitHeading::Right,
-                },
-                &grid,
-            )
-            .compute_nb_visits(),
-        );
-        // From right
-        max = max.max(
-            compute_beams(
-                VisitSchedule {
-                    row,
-                    col: nb_cols - 1,
-                    direction: VisitHeading::Left,
-                },
-                &grid,
-            )
-            .compute_nb_visits(),
-        );
-    }
-
-    max as i64
+    (0..nb_cols)
+        .map(|col| VisitSchedule {
+            row: 0,
+            col,
+            direction: VisitHeading::Down,
+        })
+        .chain((0..nb_cols).map(|col| VisitSchedule {
+            row: nb_rows - 1,
+            col,
+            direction: VisitHeading::Up,
+        }))
+        .chain((0..nb_rows).map(|row| VisitSchedule {
+            row,
+            col: 0,
+            direction: VisitHeading::Right,
+        }))
+        .chain((0..nb_rows).map(|row| VisitSchedule {
+            row,
+            col: nb_cols - 1,
+            direction: VisitHeading::Left,
+        }))
+        .par_bridge()
+        .map(|schedule| compute_beams(schedule, &grid).compute_nb_visits())
+        .max()
+        .unwrap_or(0) as i64
 }
 
 #[cfg(test)]
