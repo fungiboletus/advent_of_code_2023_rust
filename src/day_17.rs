@@ -34,7 +34,6 @@ fn parse_input_data(data: &str) -> IResult<&str, Array2<u8>> {
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, PartialOrd, Ord, Hash)]
 enum Direction {
-    None,
     Up,
     Down,
     Left,
@@ -72,51 +71,6 @@ struct CostlyTile {
     row: usize,
     col: usize,
     straight: Straight,
-}
-
-#[allow(dead_code)]
-fn pretty_print_dijkstra(grid: &Array2<u8>, directions: &Array2<Direction>) {
-    let dim = grid.dim();
-    let (nrows, ncols) = dim;
-    for i in 0..nrows {
-        for j in 0..ncols {
-            print!(
-                "{}",
-                match directions[[i, j]] {
-                    Direction::None => (grid[[i, j]] + 48) as char,
-                    Direction::Up => '↑',
-                    Direction::Down => '↓',
-                    Direction::Left => '←',
-                    Direction::Right => '→',
-                }
-            );
-        }
-        println!();
-    }
-    println!();
-}
-
-fn highlight_path(
-    grid: &Array2<u8>,
-    directions: &Array2<Direction>,
-    start: (usize, usize),
-    end: (usize, usize),
-) -> Array2<Direction> {
-    let mut new_directions = Array2::from_elem(grid.dim(), Direction::None);
-
-    let mut current = end;
-    while current != start {
-        new_directions[current] = directions[current];
-        match directions[current] {
-            Direction::Up => current = (current.0 + 1, current.1),
-            Direction::Down => current = (current.0 - 1, current.1),
-            Direction::Left => current = (current.0, current.1 + 1),
-            Direction::Right => current = (current.0, current.1 - 1),
-            _ => unreachable!("Unknown direction"),
-        }
-    }
-
-    new_directions
 }
 
 fn dijkstra(grid: &Array2<u8>, start: (usize, usize), end: (usize, usize)) -> Option<usize> {
@@ -159,22 +113,10 @@ fn dijkstra(grid: &Array2<u8>, start: (usize, usize), end: (usize, usize)) -> Op
         let CostlyTile { row, col, straight } = costly_tile;
         let Straight {
             direction,
-            straight_length,
+            straight_length: _,
         } = straight;
-        println!(
-            "row: {}, col: {}, cost: {}, length: {}",
-            row, col, cost, straight_length
-        );
-        // checkup
-        if !straight.is_valid() {
-            panic!("Unvalid straight: too long");
-            //continue;
-        }
+
         if (row, col) == end {
-            println!("Found a path");
-            //debug_direction[[row, col]] = direction;
-            //let highlighted_path = highlight_path(grid, &costs, start, end);
-            //pretty_print_dijkstra(grid, &highlighted_path);
             return Some(cost);
         }
 
@@ -182,7 +124,6 @@ fn dijkstra(grid: &Array2<u8>, start: (usize, usize), end: (usize, usize)) -> Op
             continue;
         }
 
-        //debug_direction[[row, col]] = direction; // TODO broken
         costs.insert(costly_tile, cost);
 
         // If we can go up
@@ -196,7 +137,6 @@ fn dijkstra(grid: &Array2<u8>, start: (usize, usize), end: (usize, usize)) -> Op
                     straight: next_straight,
                 };
                 if next_cost < *costs.get(&next_costly_tile).unwrap_or(&usize::MAX) {
-                    //costs.insert(next_costly_tile.clone(), next_cost);
                     priority_queue.push(Reverse((next_cost, next_costly_tile)));
                 }
             }
@@ -212,7 +152,6 @@ fn dijkstra(grid: &Array2<u8>, start: (usize, usize), end: (usize, usize)) -> Op
                     straight: next_straight,
                 };
                 if next_cost < *costs.get(&next_costly_tile).unwrap_or(&usize::MAX) {
-                    //costs.insert(next_costly_tile.clone(), next_cost);
                     priority_queue.push(Reverse((next_cost, next_costly_tile)));
                 }
             }
@@ -228,7 +167,6 @@ fn dijkstra(grid: &Array2<u8>, start: (usize, usize), end: (usize, usize)) -> Op
                     straight: next_straight,
                 };
                 if next_cost < *costs.get(&next_costly_tile).unwrap_or(&usize::MAX) {
-                    //costs.insert(next_costly_tile.clone(), next_cost);
                     priority_queue.push(Reverse((next_cost, next_costly_tile)));
                 }
             }
@@ -244,7 +182,6 @@ fn dijkstra(grid: &Array2<u8>, start: (usize, usize), end: (usize, usize)) -> Op
                     straight: next_straight,
                 };
                 if next_cost < *costs.get(&next_costly_tile).unwrap_or(&usize::MAX) {
-                    //costs.insert(next_costly_tile.clone(), next_cost);
                     priority_queue.push(Reverse((next_cost, next_costly_tile)));
                 }
             }
@@ -256,9 +193,9 @@ fn dijkstra(grid: &Array2<u8>, start: (usize, usize), end: (usize, usize)) -> Op
 
 pub fn day_17_part_1(data: &str) -> i64 {
     let (_, grid) = parse_input_data(data).expect("Failed to parse input data");
-    println!("{:?}", grid);
-    dijkstra(&grid, (0, 0), (grid.nrows() - 1, grid.ncols() - 1)).expect("Failed to find a path")
-        as i64
+    let start = (0, 0);
+    let end = (grid.nrows() - 1, grid.ncols() - 1);
+    dijkstra(&grid, start, end).expect("Failed to find a path") as i64
 }
 
 pub fn day_17_part_2(data: &str) -> i64 {
