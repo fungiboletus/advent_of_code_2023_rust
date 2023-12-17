@@ -2,6 +2,12 @@
     Part1: Today looks like djistra pathfinding with a twist.
 
     The twist is annoying.
+
+    Part 2: The same but more annoying.
+
+    I initially used a static array of directions, but read
+    on the subrredit that using the last direction and a counter
+    was a better idea. So I went with that.
 */
 
 use std::{
