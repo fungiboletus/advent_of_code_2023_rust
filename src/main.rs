@@ -15,6 +15,7 @@ mod day_14;
 mod day_15;
 mod day_16;
 mod day_17;
+mod day_18;
 
 fn execute_day<F, G>(day: &str, data: &str, part_1: F, part_2: G) -> ()
 where
@@ -56,4 +57,5 @@ fn main() {
     execute_day!("15", day_15::day_15_part_1, day_15::day_15_part_2);
     execute_day!("16", day_16::day_16_part_1, day_16::day_16_part_2);
     execute_day!("17", day_17::day_17_part_1, day_17::day_17_part_2);
+    execute_day!("18", day_18::day_18_part_1, day_18::day_18_part_2);
 }
