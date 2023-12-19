@@ -173,7 +173,6 @@ fn polygon_inner_area(points: Vec<(isize, isize)>) -> isize {
 
     for i in 0..n - 1 {
         let (x1, y1) = points[i];
-        //let (x2, y2) = if i == n - 1 { points[0] } else { points[i + 1] };
         let (x2, y2) = points[i + 1];
 
         area += x1 * y2;
